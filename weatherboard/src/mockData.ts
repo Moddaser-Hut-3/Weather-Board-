@@ -1,7 +1,7 @@
 interface Weather {
-    city: String;
-    temperature: Number;
-    condition: String;
+    city: string;
+    temperature: number;
+    condition: string; // fix: primitive types in TS must be lowercase, credits to w3schools. 
 }
 // Essentially a blueprint that says any weather object must look like this.
 
