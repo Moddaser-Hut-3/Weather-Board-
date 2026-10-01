@@ -90,7 +90,7 @@ const Weather = () => {
             </div>
             
             {showFavourites ? (
-                <FavouritesList />
+                <FavouritesList favourites={favourites} />
             ) : (
                 <div className="weather-info">
                     {result ? (
@@ -116,4 +116,4 @@ const Weather = () => {
     )
 }
 
-export default Weather
+export default Weather;
