@@ -1,5 +1,6 @@
 import React from 'react';
-import Weather from './components/Weather';
+import  Weather from './components/Weather';
+import FavouritesList from './components/FavouritesList';
 
 const App = () => {
   return (
