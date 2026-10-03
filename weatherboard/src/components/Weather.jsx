@@ -108,7 +108,7 @@ const Weather = () => {
                 </div>
             )}
 
-        <button onClick={() => setShowFavourites(!showFavourites)}>
+        <button onClick={() => setShowFavourites(!showFavourites)}> 
             {showFavourites ? 'Show Weather' : 'Show Favourites'}
         </button>
             
