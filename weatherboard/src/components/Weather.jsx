@@ -20,19 +20,19 @@ const Weather = () => {
     const [favourites, setFavourites] = useState([]); // for tracking favourite cities.
     const [loading, setLoading] = useState(false); // for tracking API request status
 
-    const fetchGeocode = async (city) => {
+    const fetchGeocode = async (city) => { // converts city namen to coordinates so we can fetch weather.
         const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=en&format=json`);
         const data = await response.json();
         return data.results?.[0] || null;
     };
 
-    const fetchWeather = async (latitude, longitude) => {
+    const fetchWeather = async (latitude, longitude) => { // Gets actual weather data for those coordinates.
         const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&temperature_unit=celsius`);
         const data = await response.json();
         return data.current_weather;
     };
 
-    const getConditionFromCode = (code) => {
+    const getConditionFromCode = (code) => { // API returns numeric codes, but we need readable conditions for the UI.
         const conditions = {
             0: 'Sunny',
             1: 'Cloudy',
@@ -68,11 +68,12 @@ const Weather = () => {
             setResult(null);
             setMessage('');
             return;
-        }
+        } // empty search bar wont trigger API calls. return. 
 
         setLoading(true);
         setMessage('');
-        setResult(null);
+        setSearch(''); 
+        setResult(null); // clear old data before making new requests.
 
         try {
             const geoData = await fetchGeocode(search);
@@ -81,9 +82,10 @@ const Weather = () => {
                 setMessage(`"${search}" not found. Check the spelling and try again.`);
                 setLoading(false);
                 return;
-            }
+            } // if city not found, stop here. no point fetching weather with bad coordinates.
 
             const weatherData = await fetchWeather(geoData.latitude, geoData.longitude);
+            // fetch both pieces of data in sequence - second call needs output from first call. 
 
             setResult({
                 city: geoData.name,
@@ -91,12 +93,12 @@ const Weather = () => {
                 condition: getConditionFromCode(weatherData.weathercode)
             });
 
-            setMessage('');
+            setMessage(''); // clears prev message on successful search
         } catch (error) {
             setMessage('Network error. Please check your connection and try again.');
             setResult(null);
         } finally {
-            setLoading(false);
+            setLoading(false); // always stop loading regardless of success or failure to avoid infinite loading state.
         }
     };
 
