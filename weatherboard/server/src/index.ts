@@ -5,10 +5,16 @@ import express from 'express';
 import { Client } from 'pg';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import cors from 'cors';
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON request bodies and put in req.body
   
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
 const client = new Client({
   user: 'postgres',
   host: 'localhost',
