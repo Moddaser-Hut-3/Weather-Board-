@@ -41,6 +41,36 @@ app.post('/api/auth/register', async (req, res) => {
   
 });
 
+
+app.post('/api/auth/login', async (req, res) => {
+  try {
+
+    const { username, password } = req.body;
+
+    const result = await client.query(
+      'SELECT id, username, password_hash FROM users WHERE username = $1',
+      [username]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const user = result.rows[0];
+    const isPasswordCorrect = await bcrypt.compare(password, user.password_hash);
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ error: 'Invalid Credentials' });
+    }
+    
+    res.status(200).json({ message: 'Login successful', userID: user.id });
+
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
+
+
 app.get('/', (req, res) => {
   res.json({ message: 'Server is running' });
 });
