@@ -3,6 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import { Client } from 'pg';
+import bcrypt from 'bcrypt';
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON request bodies and put in req.body
@@ -25,9 +26,11 @@ app.post('/api/auth/register', async (req, res) => {
   try {
     const { username, password } = req.body;
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const result = await client.query(
       'INSERT INTO users (username, password_hash) VALUES ($1, $2)',
-      [username, password]
+      [username, hashedPassword]
     );
 
     const newUser = result.rows[0];

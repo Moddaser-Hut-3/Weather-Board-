@@ -8,16 +8,25 @@ What we're building: A backend server with user registration and login. Users wi
 
 The 10 steps:
 
-Scaffold an Express + TypeScript project; run npm run dev and see it respond to a request
-Connect to PostgreSQL via the pg library and test the connection
-Create the users table with a node-pg-migrate migration
-Write a POST /api/auth/register endpoint that accepts a username and password
-Hash the password with bcrypt before saving it
-Write a POST /api/auth/login endpoint that checks the username exists
-Compare the submitted password to the stored hash; reject if wrong
-Sign and return a JWT token on successful login
-Set up CORS on the backend so the React frontend can call these endpoints
-Wire the register and login forms on the frontend to call the real endpoints
+1. Scaffold an Express + TypeScript project; run npm run dev and see it respond to a request
+
+2. Connect to PostgreSQL via the pg library and test the connection
+
+3. Create the users table with a node-pg-migrate migration
+
+4. Write a POST /api/auth/register endpoint that accepts a username and password
+
+5. Hash the password with bcrypt before saving it
+
+6. Write a POST /api/auth/login endpoint that checks the username exists
+
+7. Compare the submitted password to the stored hash; reject if wrong
+
+8. Sign and return a JWT token on successful login
+
+9. Set up CORS on the backend so the React frontend can call these endpoints
+
+10. Wire the register and login forms on the frontend to call the real endpoints
 
 Each step teaches one thing:
 
