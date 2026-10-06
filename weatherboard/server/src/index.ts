@@ -4,6 +4,7 @@ dotenv.config();
 import express from 'express';
 import { Client } from 'pg';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON request bodies and put in req.body
@@ -62,8 +63,14 @@ app.post('/api/auth/login', async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(401).json({ error: 'Invalid Credentials' });
     }
+
+    const token = jwt.sign(
+      { userId: user.id },
+      'my-secret-key',
+      { expiresIn: '24h' }
+    );
     
-    res.status(200).json({ message: 'Login successful', userID: user.id });
+    res.status(200).json({ message: 'Login successful', token });
 
   } catch (error) {
     res.status(401).json({ error: 'Invalid credentials' });
