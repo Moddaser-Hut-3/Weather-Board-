@@ -37,7 +37,9 @@ Steps 8–10: tokens, CORS, and wiring the frontend
 Definition of done (from the brief):
 
 A new user can register, then log in with the same credentials and receive a token.
+
 Logging in with the wrong password is rejected.
+
 Inspecting the users table shows a hash in password_hash, never the original password.
 
 >

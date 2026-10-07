@@ -29,6 +29,22 @@ if (client) {
   console.log('Connected to PostgreSQL database');
 }
 
+const authMiddleware = (req: any, res: any, next: any) => {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, 'my-secret-key') as any;
+    req.userId = decoded.userId;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { username, password } = req.body;

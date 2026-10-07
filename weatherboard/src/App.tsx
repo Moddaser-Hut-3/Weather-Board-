@@ -3,6 +3,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import  Weather from './components/Weather';
 import FavouritesList from './components/FavouritesList';
+import './App.css';
 
 // researched this to find it displaying errors because of jsx not being recognized in tsx files.
 
@@ -21,12 +22,16 @@ const App = () => {
         {showLogin ? (
           <>
             <Login setIsLoggedIn={setIsLoggedIn} />
-            <p>Don't have an account? <button onClick={() => setShowLogin(false)}>Register</button></p>
+            <p className="auth-toggle">Don't have an account? 
+              <button onClick={() => setShowLogin(false)}>Register</button>
+            </p>
           </>
         ) : (
           <>
             <Register setShowLogin={setShowLogin} />
-            <p>Already have an account? <button onClick={() => setShowLogin(true)}>Login</button></p>
+            <p className="auth-toggle">Already have an account? 
+              <button onClick={() => setShowLogin(true)}>Login</button>
+            </p>
           </>
         )}
       </>
