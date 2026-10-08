@@ -103,6 +103,21 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+app.get('/api/favorites', authMiddleware, async (req: any, res: any) => {
+  try {
+
+    const result = await client.query(
+      'SELECT id, user_id, city_name, latitude, longitude, created_at FROM favourite_cities WHERE user_id = $1',
+      [req.userId]
+    );
+
+    res.status(200).json(result.rows)
+    
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch favourites' });
+  }
+});
+
 
 app.post('/api/auth/logout', authMiddleware, (_req, res) => {
   res.status(200).json({ message: 'Logout successful' });
