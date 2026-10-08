@@ -118,6 +118,22 @@ app.get('/api/favorites', authMiddleware, async (req: any, res: any) => {
   }
 });
 
+app.post('/api/favorites', authMiddleware, async (req: any, res: any) => {
+  try {
+    const { city_name, latitude, longitude } = req.body;
+
+    const result = await client.query(
+      'INSERT INTO favourite_cities (user_id, city_name, latitude, longitude) VALUES ($1, $2, $3, $4) RETURNING *',
+      [req.userId, city_name, latitude, longitude]
+    );
+
+    res.status(201).json(result.rows);
+
+  } catch (error) {
+    res.status(400).json({ error: 'Failed to add favourite' });
+  }
+});
+
 
 app.post('/api/auth/logout', authMiddleware, (_req, res) => {
   res.status(200).json({ message: 'Logout successful' });
