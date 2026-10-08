@@ -150,7 +150,7 @@ app.delete('/api/favorites/:id', authMiddleware, async (req: any, res: any) => {
 });
 
 /* 
-  - All 3 favorite endoints (GET, POST, DELETE) are protected by authMiddleware
+  - All 3 favorites endoints (GET, POST, DELETE) are protected by authMiddleware
   - So only authenticated users can access them
   - Without it, anyone can use these endpoints without logging in. 
   - With Middleware, server checks token first before route handler runs.
