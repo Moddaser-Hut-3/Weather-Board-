@@ -23,7 +23,7 @@ const Weather = () => {
     const fetchGeocode = async (city) => { // converts city namen to coordinates so we can fetch weather.
         const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=en&format=json`);
         const data = await response.json();
-        return data.results?.[0] || null;
+        return data?.results?.[0] || null;
     };
 
     const fetchWeather = async (latitude, longitude) => { // Gets actual weather data for those coordinates.
