@@ -4,10 +4,18 @@
     padding: 2rem;
 }
 
-.App h1 {
-    text-align: center;
-    color: #333;
+.app-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 2rem;
+    position: relative;
+}
+
+.App h1 {
+    color: #333;
+    margin: 0;
+    text-align: center;
 }
 
 .auth-toggle {
@@ -30,4 +38,21 @@
 
 .auth-toggle button:hover {
     color: #0b7dda;
+}
+
+.logout-btn {
+    position: absolute;
+    right: 0;
+    padding: 0.5rem 1rem;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.logout-btn:hover {
+    background: #ee5a52;
 }

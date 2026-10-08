@@ -10,11 +10,28 @@ import './App.css';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLogin, setShowLogin] = useState(true);
-  
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token');
+    await fetch('http://localhost:3001/api/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+  };
+
   return (
   <div className="App">
-    <h1>Weather Board</h1>
-    
+    <div className="app-header">
+      <h1>Weather Board</h1>
+      {isLoggedIn && (
+        <button onClick={handleLogout} className="logout-btn">Logout</button>
+      )}
+    </div>
+
     {isLoggedIn ? (
       <Weather />
     ) : (
