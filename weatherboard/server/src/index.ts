@@ -134,6 +134,21 @@ app.post('/api/favorites', authMiddleware, async (req: any, res: any) => {
   }
 });
 
+app.delete('/api/favorites/:id', authMiddleware, async (req: any, res: any) => {
+  try {
+    const id = req.params.id; // extracts ID from the URL path: /api/favorites/1 where id=1 for example.
+    
+    const result = await client.query(
+      'DELETE FROM favourite_cities WHERE id = $1 AND user_id = $2',
+      [id, req.userId] // req.userID comes from authMiddleware, not from params.
+    ); 
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(400).json({ error: 'Failed to delete favourite'})
+  }
+});
+
 
 app.post('/api/auth/logout', authMiddleware, (_req, res) => {
   res.status(200).json({ message: 'Logout successful' });
