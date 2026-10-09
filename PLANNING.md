@@ -86,3 +86,34 @@ Requesting /api/favorites without a token is rejected (401), not silently given 
 
 -->
 
+
+# for stage 5:
+
+<!--
+
+What we’re building: A comprehensive test suite that covers both happy paths (things working) and failure paths (things breaking correctly).
+
+The 8 steps:
+
+1. Install Jest, ts-jest, and Supertest
+2. Set up a test database and environment
+3. Write database setup/teardown (run before and after each test)
+4. Write auth tests (register, login, password hashing)
+5. Write favorites tests (GET, POST, DELETE with auth)
+6. Write failure case tests (duplicate username, wrong password,        unauthorized)
+7. Run the full test suite and verify all pass
+8. Deliberately break the code and verify tests catch it
+
+Each step teaches one thing:
+
+Steps 1–3: Test environment and infrastructure
+Steps 4–6: Writing actual tests (happy + failure paths)
+Steps 7–8: Running and verifying tests work
+
+Definition of done:
+
+- npm test runs the full suite and everything passes
+- Deliberately breaking the password check makes at least one test fail
+- Tests cover both success and failure cases
+
+-->
