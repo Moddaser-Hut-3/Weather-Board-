@@ -103,6 +103,58 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+app.get('/api/favorites', authMiddleware, async (req: any, res: any) => {
+  try {
+
+    const result = await client.query(
+      'SELECT id, user_id, city_name, latitude, longitude, created_at FROM favourite_cities WHERE user_id = $1',
+      [req.userId]
+    );
+
+    res.status(200).json(result.rows)
+    
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch favourites' });
+  }
+});
+
+app.post('/api/favorites', authMiddleware, async (req: any, res: any) => {
+  try {
+    const { city_name, latitude, longitude } = req.body;
+
+    const result = await client.query(
+      'INSERT INTO favourite_cities (user_id, city_name, latitude, longitude) VALUES ($1, $2, $3, $4) RETURNING *',
+      [req.userId, city_name, latitude, longitude]
+    );
+
+    res.status(201).json(result.rows);
+
+  } catch (error) {
+    res.status(400).json({ error: 'Failed to add favourite' });
+  }
+});
+
+app.delete('/api/favorites/:id', authMiddleware, async (req: any, res: any) => {
+  try {
+    const id = req.params.id; // extracts ID from the URL path: /api/favorites/1 where id=1 for example.
+    
+    const result = await client.query(
+      'DELETE FROM favourite_cities WHERE id = $1 AND user_id = $2',
+      [id, req.userId] // req.userID comes from authMiddleware, not from params.
+    ); 
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(400).json({ error: 'Failed to delete favourite'})
+  }
+});
+
+/* 
+  - All 3 favorites endoints (GET, POST, DELETE) are protected by authMiddleware
+  - So only authenticated users can access them
+  - Without it, anyone can use these endpoints without logging in. 
+  - With Middleware, server checks token first before route handler runs.
+*/
 
 app.post('/api/auth/logout', authMiddleware, (_req, res) => {
   res.status(200).json({ message: 'Logout successful' });

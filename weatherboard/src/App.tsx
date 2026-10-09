@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Register from './components/Register';
 import Login from './components/Login';
-import  Weather from './components/Weather';
+import Weather from './components/Weather';
 import FavouritesList from './components/FavouritesList';
 import './App.css';
 
@@ -54,7 +54,7 @@ const App = () => {
       </>
     )}
   </div>
-);
+  );
 };
 
 export default App;

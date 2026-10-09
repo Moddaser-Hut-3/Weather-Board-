@@ -1,25 +1,83 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './FavouritesList.css';
 
-const FavouritesList = ({ favourites = [] }) => { // empty array if no favourites
+const FavouritesList = () => {
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`http://localhost:3001/api/favorites/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        fetchFavorites(); // Refetch after deletion
+      } else {
+        alert('Failed to delete favorite');
+      }
+    } catch (error) {
+      alert('Error deleting favorite');
+    }
+  };
+
+  const fetchFavorites = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:3001/api/favorites', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setFavorites(data);
+        setError(''); // Clear error on success
+      } else {
+        setError('Failed to load favourites');
+      }
+    } catch (error) {
+      setError('Error connecting to the server');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFavorites();
+  }, []);
 
   return (
     <div className="favourites-list">
       <h2>Favourite Cities</h2>
 
-      <div className="favourites-container">
-        {favourites.length === 0 ? ( // if length is 0, show message, else map through favourites and display them.
-          <p>No favourite cities yet. Search and click the heart!</p>
-        ) : (
-        favourites.map((weather, index) => (
-          <div key={index} className="favourite-item">
-            <p className="city-name">{weather.city}</p>
-            <p className="temperature">{weather.temperature}°C</p>
-            <p className="condition">{weather.condition}</p>
-          </div>
-        ))
-        )}
-      </div>
+      {loading ? (
+        <p>Loading favorites...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <div className="favourites-container">
+          {favorites.length === 0 ? (
+            <p>No favourite cities yet. Search and click the heart!</p>
+          ) : (
+            <ul>
+              {favorites.map(fav => (
+                <li key={fav.id}>
+                  {fav.city_name}
+                  <button onClick={() => handleDelete(fav.id)}>Delete</button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 };

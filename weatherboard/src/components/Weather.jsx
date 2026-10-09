@@ -32,6 +32,23 @@ const Weather = () => {
         return data.current_weather;
     };
 
+    const fetchFavourites = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch('http://localhost:3001/api/favorites', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setFavourites(data);
+            }
+        } catch (error) {
+            console.error('Error fetching favourites:', error);
+        }
+    };
+
     const getConditionFromCode = (code) => { // API returns numeric codes, but we need readable conditions for the UI.
         const conditions = {
             0: 'Sunny',
@@ -89,6 +106,8 @@ const Weather = () => {
 
             setResult({
                 city: geoData.name,
+                latitude: geoData.latitude,
+                longitude: geoData.longitude,
                 temperature: Math.round(weatherData.temperature),
                 condition: getConditionFromCode(weatherData.weathercode)
             });
@@ -114,23 +133,41 @@ const Weather = () => {
         return iconMap[condition] || cloudy_icon;
     };
 
-    const toggleFavourite = () => {
+    const toggleFavourite = async () => {
         if (!result) return;
 
-        const isFavourited = favourites.some(fav => fav.city === result.city); // .some method verifies the city is in fav.
+        const token = localStorage.getItem('token');
 
-        if (isFavourited) {
-            setFavourites(favourites.filter(fav => fav.city !== result.city)); // removes the city from favourites if it already exists
-        } else {
-            setFavourites([...favourites, result]); // adds the city to favourites if it doesn't exist
+        try {
+            const response = await fetch('http://localhost:3001/api/favorites', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    city_name: result.city,
+                    latitude: result.latitude,
+                    longitude: result.longitude
+                })
+            });
+
+            if (response.ok) {
+                alert('Favourite added!');
+                fetchFavourites(); // refetch after adding
+            } else if (response.status === 400) {
+                alert('Already favourited');
+            }
+        } catch (error) {
+            alert('Error adding favourite');
         }
     };
-
-
     
     useEffect(() => {
         inputRef.current.focus(); // for focusing the input field on component mount
+        fetchFavourites(); // fetch faves when component loads
     }, []);
+    
     return ( 
 
         <div className="weather">
@@ -152,7 +189,7 @@ const Weather = () => {
             </div>
             
             {showFavourites ? (
-                <FavouritesList favourites={favourites} />
+                <FavouritesList />
             ) : (
                 <div className="weather-info">
                     {loading ? (
