@@ -1,33 +1,45 @@
-import dotenv from 'dotenv';
 import { Client } from 'pg';
 
-// Load .env.test if NODE_ENV is 'test'
-if (process.env.NODE_ENV === 'test') {
-  dotenv.config({ path: '.env.test' });
-}
+let resetClient: Client | null = null;
 
 export const getTestClient = () => {
   const client = new Client({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'postgres_test',
-    password: process.env.DATABASE_PASSWORD || 'devpassword',
-    port: 5432,
+    connectionString: process.env.DATABASE_URL
   });
   return client;
 };
 
+export const initResetClient = async () => {
+  if (!resetClient) {
+    resetClient = new Client({
+      connectionString: process.env.DATABASE_URL
+    });
+    await resetClient.connect();
+  }
+};
+
 export const resetTestDatabase = async () => {
-  const client = getTestClient();
-  await client.connect();
-  
+  if (!resetClient) {
+    await initResetClient();
+  }
+
   try {
-    // Delete all data from tables (order matters because of foreign keys)
-    await client.query('DELETE FROM favourite_cities;');
-    await client.query('DELETE FROM users;');
+    // Truncate tables (faster than DELETE, resets sequences)
+    await resetClient!.query('TRUNCATE favourite_cities CASCADE;');
+    await resetClient!.query('TRUNCATE users CASCADE;');
   } catch (error) {
     console.error('Error resetting database:', error);
-  } finally {
-    await client.end();
+    throw error;
+  }
+};
+
+export const closeResetClient = async () => {
+  if (resetClient) {
+    try {
+      await resetClient.end();
+    } catch (error) {
+      console.error('Error closing reset client:', error);
+    }
+    resetClient = null;
   }
 };

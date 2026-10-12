@@ -1,12 +1,7 @@
 import request from 'supertest';
 import { Client } from 'pg';
-import dotenv from 'dotenv';
-import { resetTestDatabase, getTestClient } from './setup';
+import { resetTestDatabase, getTestClient, closeResetClient } from './setup';
 import app, { client as globalClient } from '../index';
-
-if (process.env.NODE_ENV === 'test') {
-  dotenv.config({ path: '.env.test' });
-}
 
 let client: Client;
 let token1: string;
@@ -21,7 +16,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await client.end();
-  await globalClient.end();
+  await closeResetClient();
 });
 
 beforeEach(async () => {

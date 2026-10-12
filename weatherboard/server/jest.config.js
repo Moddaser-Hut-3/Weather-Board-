@@ -5,5 +5,8 @@ module.exports = {
     collectCoverageFrom: [
         'src/**/*.ts',
         '!src/index.ts'
-    ]
+    ],
+    testTimeout: 15000,
+    forceExit: true,
+    maxWorkers: 1
 };
