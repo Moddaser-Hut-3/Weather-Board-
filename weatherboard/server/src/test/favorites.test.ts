@@ -1,3 +1,9 @@
+/**
+ * I test the favorites endpoints by verifying users can add, retrieve, and delete
+ * their favorite cities. I ensure data isolation so each user only sees and controls
+ * their own favorites, and I validate that authentication is required for all operations.
+ */
+
 import request from 'supertest';
 import { Client } from 'pg';
 import { resetTestDatabase, getTestClient, closeResetClient } from './setup';

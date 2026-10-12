@@ -1,3 +1,9 @@
+/**
+ * I test the authentication system including user registration, login, password hashing,
+ * and JWT token generation. I verify that passwords are securely hashed with bcrypt,
+ * users can register with unique usernames, and valid credentials generate valid tokens.
+ */
+
 import request from 'supertest';
 import { Client } from 'pg';
 import bcrypt from 'bcrypt';
