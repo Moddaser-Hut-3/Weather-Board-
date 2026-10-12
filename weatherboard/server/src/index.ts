@@ -1,5 +1,11 @@
 import dotenv from 'dotenv';
-dotenv.config();
+
+// Load .env.test if NODE_ENV is 'test'
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: '.env.test' });
+} else {
+  dotenv.config();
+}
 
 import express from 'express';
 import { Client } from 'pg';
@@ -16,11 +22,7 @@ app.use(cors({
 })); // Allows requests from react frontend
 
 const client = new Client({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'postgres',
-  password: process.env.DATABASE_PASSWORD,
-  port: 5432,
+  connectionString: process.env.DATABASE_URL
 });
 
 client.connect();
@@ -52,7 +54,7 @@ app.post('/api/auth/register', async (req, res) => { // register endpoint
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await client.query(
-      'INSERT INTO users (username, password_hash) VALUES ($1, $2)',
+      'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING *',
       [username, hashedPassword]
     );
 
@@ -164,6 +166,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'Server is running' });
 });
 
-app.listen(3001, () => {
-  console.log('Server listening on port 3001');
-});
+export default app;
+export { client };
+
+// only start the server if this file is run directly (not imported in tests)
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(3001, () => {console.log('Server listening on port 3001'); });
+}

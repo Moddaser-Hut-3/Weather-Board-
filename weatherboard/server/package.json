@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_ENV=test jest",
+    "test:auth": "cross-env NODE_ENV=test jest auth.test.ts",
+    "test:favorites": "cross-env NODE_ENV=test jest favorites.test.ts",
+    "test:watch": "cross-env NODE_ENV=test jest --watch",
+    "test:verbose": "cross-env NODE_ENV=test jest --verbose"
   },
   "keywords": [],
   "author": "",
@@ -23,11 +27,17 @@
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.4",
     "@types/pg": "^8.23.1",
+    "@types/supertest": "^7.2.1",
+    "cross-env": "^10.1.0",
+    "jest": "^30.5.2",
     "node-pg-migrate": "^9.0.0",
     "pg-format": "^1.0.4",
+    "supertest": "^7.3.1",
+    "ts-jest": "^29.4.14",
     "ts-node": "^10.9.2",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
