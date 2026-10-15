@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 import { Client } from 'pg';
 
 let resetClient: Client | null = null;
