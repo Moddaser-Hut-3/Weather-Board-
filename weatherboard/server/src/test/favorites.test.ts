@@ -1,7 +1,10 @@
 /**
- * I test the favorites endpoints by verifying users can add, retrieve, and delete
- * their favorite cities. I ensure data isolation so each user only sees and controls
- * their own favorites, and I validate that authentication is required for all operations.
+ * Favorites API endpoint tests
+ *
+ * Tests the core favorites functionality: adding cities to favorites, retrieving
+ * a user's favorite list, and deleting favorites. Since this is a multi-user system,
+ * we carefully verify that users can't see or modify other users' favorites.
+ * We also make sure the API properly rejects unauthenticated requests.
  */
 
 import request from 'supertest';
@@ -15,16 +18,36 @@ let token2: string;
 let userId1: number;
 let userId2: number;
 
+/**
+ * Connect to the test database once before all tests run.
+ * This gives us a fresh client to work with for the entire test suite.
+ * @returns {Promise<void>}
+ */
 beforeAll(async () => {
   client = getTestClient();
   await client.connect();
 });
 
+/**
+ * Clean up the database connection after all tests finish.
+ * This prevents the test runner from hanging and frees up resources.
+ * @returns {Promise<void>}
+ */
 afterAll(async () => {
   await client.end();
   await closeResetClient();
 });
 
+/**
+ * Reset the database and create two test users before each test.
+ * Each user gets their own token so we can test multi-user scenarios and
+ * verify that users can't access each other's data.
+ * @returns {Promise<void>}
+ * @sets {string} token1 - JWT token for user1
+ * @sets {string} token2 - JWT token for user2
+ * @sets {number} userId1 - Database ID for user1
+ * @sets {number} userId2 - Database ID for user2
+ */
 beforeEach(async () => {
   await resetTestDatabase();
 
@@ -64,7 +87,19 @@ beforeEach(async () => {
   token2 = login2.body.token;
 });
 
+/**
+ * Test suite for all favorites-related endpoints
+ */
 describe('Favorites Endpoints', () => {
+  /**
+   * GET /api/favorites
+   *
+   * Retrieves the list of favorite cities for the authenticated user.
+   * Only returns that user's favorites, not anyone else's.
+   * @param {string} Authorization - Bearer token from login
+   * @returns {Object[]} Array of favorite objects with city name, coordinates, and user_id
+   * @throws {401} If no valid token provided
+   */
   describe('GET /api/favorites', () => {
     it('should reject unauthenticated requests', async () => {
       const response = await request(app)
@@ -83,6 +118,11 @@ describe('Favorites Endpoints', () => {
       expect(response.body).toEqual([]);
     });
 
+    /**
+     * The critical data isolation test. We verify that even when multiple users
+     * have favorites in the system, each user only sees their own. This is a
+     * security requirement — users should never see other users' data.
+     */
     it('should return only logged-in user\'s favorites', async () => {
       // User 1 adds a favorite
       await request(app)
@@ -116,6 +156,20 @@ describe('Favorites Endpoints', () => {
     });
   });
 
+  /**
+   * POST /api/favorites
+   *
+   * Adds a new favorite city for the authenticated user. The request requires
+   * the city name, latitude, and longitude. The endpoint should only work for
+   * logged-in users.
+   * @param {string} Authorization - Bearer token from login
+   * @param {Object} body - Request body
+   * @param {string} body.city_name - Name of the city to add
+   * @param {number} body.latitude - City's latitude coordinate
+   * @param {number} body.longitude - City's longitude coordinate
+   * @returns {Object[]} Array containing the newly created favorite object
+   * @throws {401} If no valid token provided
+   */
   describe('POST /api/favorites', () => {
     it('should reject unauthenticated requests', async () => {
       const response = await request(app)
@@ -147,6 +201,18 @@ describe('Favorites Endpoints', () => {
     });
   });
 
+  /**
+   * DELETE /api/favorites/:id
+   *
+   * Removes a favorite city by its ID. Users can only delete their own favorites,
+   * and the endpoint requires authentication. This tests both authorization
+   * (are you the owner?) and authentication (are you logged in?).
+   * @param {string} Authorization - Bearer token from login
+   * @param {number} id - ID of the favorite to delete
+   * @returns {void} 204 No Content on success
+   * @throws {401} If no valid token provided
+   * @throws {403} If favorite doesn't belong to authenticated user
+   */
   describe('DELETE /api/favorites/:id', () => {
     it('should reject unauthenticated requests', async () => {
       const response = await request(app)
@@ -184,6 +250,12 @@ describe('Favorites Endpoints', () => {
       expect(listResponse.body).toHaveLength(0);
     });
 
+    /**
+     * Tests the ownership check when deleting. User 2 shouldn't be able to delete
+     * User 1's favorite, even if they somehow know the favorite's ID. This is
+     * the authorization layer — it protects against users tampering with other
+     * users' data.
+     */
     it('should prevent user from deleting another user\'s favorite', async () => {
       // User 1 adds a favorite
       const addResponse = await request(app)
