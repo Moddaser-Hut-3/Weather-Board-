@@ -317,10 +317,24 @@ app.get('/api/favorites', authMiddleware, async (req: any, res: any) => {
  * @returns {Object[]} 201 Created — Array containing the newly created favorite object
  * @throws {401} Unauthorized — If token is missing or invalid (checked by authMiddleware)
  * @throws {400} Bad Request — If data is invalid or database operation fails
+ * @throws {409} Conflict — If the user already has this city in their favorites
  */
 app.post('/api/favorites', authMiddleware, async (req: any, res: any) => {
   try {
     const { city_name, latitude, longitude } = req.body;
+
+    /**
+     * Reject duplicates. City names are compared case-insensitively,
+     * so "Moscow" and "moscow" count as the same city for this user.
+     */
+    const existing = await client.query(
+      'SELECT id FROM favourite_cities WHERE user_id = $1 AND lower(city_name) = lower($2)',
+      [req.userId, city_name]
+    );
+
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ error: 'Already in favourites' });
+    }
 
     /**
      * Insert the new favorite into the database.

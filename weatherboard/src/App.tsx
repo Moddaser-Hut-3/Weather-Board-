@@ -13,11 +13,10 @@
  * The logout button only appears when logged in and clears the stored JWT token.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Register from './components/Register';
 import Login from './components/Login';
 import Weather from './components/Weather';
-import FavouritesList from './components/FavouritesList';
 import './App.css';
 
 /**
@@ -32,6 +31,13 @@ const App = () => {
    * @type {[boolean, Function]}
    */
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  /**
+   * Whether the light theme is shown. The framework's default is dark;
+   * the h3-fr-dark class switches to light.
+   * @type {[boolean, Function]}
+   */
+  const [isLight, setIsLight] = useState(false);
 
   /**
    * Whether to show the login form or register form.
@@ -89,16 +95,24 @@ const App = () => {
   };
 
   return (
-    <div className="App">
-      {/* App header with title and logout button */}
+    <div className={`App h3-fr-app${isLight ? ' h3-fr-dark' : ''}`}>
+      {/* App header with title, theme toggle and logout button */}
       <div className="app-header">
-        <h1>Weather Board</h1>
+        <button
+          onClick={() => setIsLight(!isLight)}
+          className="theme-toggle h3-fr-button-icon"
+          aria-label="Toggle light and dark theme"
+          title="Toggle light and dark theme"
+        >
+          <div className={isLight ? 'h3-fr-icon-moon' : 'h3-fr-icon-sun'}></div>
+        </button>
+        <h1 className="h3-fr-type-heading-3">Weather Board</h1>
         {/**
          * Logout button only shows when user is logged in.
          * Clicking it calls handleLogout to clear the token and reset state.
          */}
         {isLoggedIn && (
-          <button onClick={handleLogout} className="logout-btn">Logout</button>
+          <button onClick={handleLogout} className="logout-btn h3-fr-button h3-fr-destructive">Logout</button>
         )}
       </div>
 
@@ -127,7 +141,7 @@ const App = () => {
               <Login setIsLoggedIn={setIsLoggedIn} />
               <p className="auth-toggle">
                 Don't have an account?
-                <button onClick={() => setShowLogin(false)}>Register</button>
+                <button onClick={() => setShowLogin(false)} className="h3-fr-button-frameless">Register</button>
               </p>
             </>
           ) : (
@@ -139,7 +153,7 @@ const App = () => {
               <Register setShowLogin={setShowLogin} />
               <p className="auth-toggle">
                 Already have an account?
-                <button onClick={() => setShowLogin(true)}>Login</button>
+                <button onClick={() => setShowLogin(true)} className="h3-fr-button-frameless">Login</button>
               </p>
             </>
           )}

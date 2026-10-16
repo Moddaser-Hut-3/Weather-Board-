@@ -15,13 +15,13 @@
 
 import React from 'react';
 import './Weather.css';
-import search_icon from '../assets/search.png';
-import cloudy_icon from '../assets/cloudy.png';
-import rainy_icon from '../assets/rainy.png';
-import sunny_icon from '../assets/sunny.png';
-import windy_icon from '../assets/windy.png';
-import snowy_icon from '../assets/snowy.png';
-import stormy_icon from '../assets/stormy.png';
+import search_icon from '../assets/search.svg';
+import cloudy_icon from '../assets/cloudy.svg';
+import rainy_icon from '../assets/rainy.svg';
+import sunny_icon from '../assets/sunny.svg';
+import windy_icon from '../assets/windy.svg';
+import snowy_icon from '../assets/snowy.svg';
+import stormy_icon from '../assets/stormy.svg';
 import FavouritesList from './FavouritesList';
 import { useState, useRef, useEffect } from 'react';
 
@@ -74,6 +74,14 @@ const Weather = () => {
      * @type {[boolean, Function]}
      */
     const [loading, setLoading] = useState(false);
+
+    /**
+     * True when the current search result is already in the user's favourites.
+     * Matches the server's case-insensitive check on city_name.
+     */
+    const isFavourite = result
+        ? favourites.some(fav => fav.city_name.toLowerCase() === result.city.toLowerCase())
+        : false;
 
     /**
      * Fetch coordinates from a city name using Open-Meteo geocoding API.
@@ -284,6 +292,14 @@ const Weather = () => {
          */
         if (!result) return;
 
+        /**
+         * Don't send a duplicate. The server also rejects it (409), but this avoids a request.
+         */
+        if (isFavourite) {
+            alert('Already in favourites');
+            return;
+        }
+
         const token = localStorage.getItem('token');
 
         try {
@@ -306,11 +322,13 @@ const Weather = () => {
                  * Refetch the favorites list so the heart icon updates immediately.
                  */
                 fetchFavourites();
-            } else if (response.status === 400) {
+            } else if (response.status === 409) {
                 /**
-                 * 400 means this city is already in favorites (unique constraint).
+                 * 409 means this city is already in favorites.
                  */
-                alert('Already favourited');
+                alert('Already in favourites');
+            } else if (response.status === 400) {
+                alert('Could not add favourite');
             }
         } catch (error) {
             alert('Error adding favourite');
@@ -331,7 +349,7 @@ const Weather = () => {
     }, []);
 
     return (
-        <div className="weather">
+        <div className="weather h3-fr-card h3-fr-border">
             {/* Search input section */}
             <div className="search-bar">
                 <input
@@ -343,11 +361,9 @@ const Weather = () => {
                     onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
                 />
 
-                <img
-                    src={search_icon}
-                    alt=""
-                    onClick={handleSearch}
-                />
+                <button className="h3-fr-button-icon" onClick={handleSearch} aria-label="Search">
+                    <img src={search_icon} alt="" />
+                </button>
             </div>
 
             {/* Main content: either favorites list or weather results */}
@@ -356,7 +372,7 @@ const Weather = () => {
                  * Show the list of user's favorite cities.
                  * User can manage favorites from this view.
                  */
-                <FavouritesList />
+                <FavouritesList onChange={fetchFavourites} />
             ) : (
                 /**
                  * Show weather search results.
@@ -374,8 +390,8 @@ const Weather = () => {
                          * Heart icon shows if this city is already in favorites.
                          */
                         <>
-                            <button onClick={toggleFavourite} className="favourite-button">
-                                {favourites.some(fav => fav.city === result.city) ? '❤️' : '🤍'} Favourite
+                            <button onClick={toggleFavourite} className="h3-fr-button-icon favourite-button" aria-label="Favourite" title="Favourite">
+                                {isFavourite ? '❤️' : '🤍'}
                             </button>
                             <img src={getWeatherIcon(result.condition)} alt={result.condition} className="weather-icon" />
                             <p className="temperature">{result.temperature}°C</p>
@@ -392,7 +408,7 @@ const Weather = () => {
             )}
 
             {/* Toggle between weather and favorites view */}
-            <button onClick={() => setShowFavourites(!showFavourites)}>
+            <button onClick={() => setShowFavourites(!showFavourites)} className="h3-fr-button">
                 {showFavourites ? 'Show Weather' : 'Show Favourites'}
             </button>
         </div>

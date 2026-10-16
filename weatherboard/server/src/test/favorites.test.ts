@@ -199,6 +199,43 @@ describe('Favorites Endpoints', () => {
       expect(response.body[0]).toHaveProperty('user_id', userId1);
       expect(response.body[0]).toHaveProperty('latitude', 35.6762);
     });
+
+    it('should reject adding the same city twice, ignoring case', async () => {
+      const city = { latitude: 55.7558, longitude: 37.6173 };
+
+      const first = await request(app)
+        .post('/api/favorites')
+        .set('Authorization', `Bearer ${token1}`)
+        .send({ city_name: 'Moscow', ...city });
+
+      const second = await request(app)
+        .post('/api/favorites')
+        .set('Authorization', `Bearer ${token1}`)
+        .send({ city_name: 'moscow', ...city });
+
+      expect(first.status).toBe(201);
+      expect(second.status).toBe(409);
+
+      const list = await request(app)
+        .get('/api/favorites')
+        .set('Authorization', `Bearer ${token1}`);
+
+      expect(list.body).toHaveLength(1);
+    });
+
+    it('should allow another user to favourite a city that is already in someone else\'s list', async () => {
+      await request(app)
+        .post('/api/favorites')
+        .set('Authorization', `Bearer ${token1}`)
+        .send({ city_name: 'Moscow', latitude: 55.7558, longitude: 37.6173 });
+
+      const response = await request(app)
+        .post('/api/favorites')
+        .set('Authorization', `Bearer ${token2}`)
+        .send({ city_name: 'Moscow', latitude: 55.7558, longitude: 37.6173 });
+
+      expect(response.status).toBe(201);
+    });
   });
 
   /**

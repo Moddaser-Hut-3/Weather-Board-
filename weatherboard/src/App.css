@@ -1,58 +1,33 @@
 .App {
     min-height: 100vh;
-    background: linear-gradient(to bottom, #87ceeb, #f0f8ff);
-    padding: 2rem;
+    padding: var(--spacing-lg);
+    /* Stack header and content from the top; the framework's space-between pushes content to the bottom. */
+    justify-content: flex-start;
 }
 
 .app-header {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: var(--spacing-lg);
     position: relative;
 }
 
 .App h1 {
-    color: #333;
-    margin: 0;
     text-align: center;
 }
 
 .auth-toggle {
     text-align: center;
-    margin-top: 1.5rem;
-    color: #666;
-    font-size: 0.95rem;
-}
-
-.auth-toggle button {
-    background: none;
-    border: none;
-    color: #2196F3;
-    cursor: pointer;
-    font-weight: bold;
-    text-decoration: underline;
-    padding: 0;
-    font-size: 0.95rem;
-}
-
-.auth-toggle button:hover {
-    color: #0b7dda;
+    margin-top: var(--spacing-md);
 }
 
 .logout-btn {
     position: absolute;
     right: 0;
-    padding: 0.5rem 1rem;
-    background: #ff6b6b;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    font-weight: bold;
 }
 
-.logout-btn:hover {
-    background: #ee5a52;
+.theme-toggle {
+    position: absolute;
+    left: 0;
 }

@@ -13,9 +13,11 @@ import './FavouritesList.css';
 
 /**
  * @component
+ * @param {Object} props
+ * @param {Function} [props.onChange] - Called after a favourite is deleted, so the parent can refresh its copy
  * @returns {JSX.Element} List of favorite cities with delete functionality
  */
-const FavouritesList = () => {
+const FavouritesList = ({ onChange }) => {
   /**
    * List of user's favorite city objects.
    * Each object contains: id, user_id, city_name, latitude, longitude, created_at.
@@ -72,6 +74,7 @@ const FavouritesList = () => {
          * This ensures the UI stays in sync with the backend.
          */
         fetchFavorites();
+        onChange?.();
       } else {
         alert('Failed to delete favorite');
       }
@@ -150,8 +153,8 @@ const FavouritesList = () => {
   }, []);
 
   return (
-    <div className="favourites-list">
-      <h2>Favourite Cities</h2>
+    <div className="favourites-list h3-fr-card h3-fr-border h3-fr-flex-column">
+      <h2 className="h3-fr-type-heading-4">Favourite Cities</h2>
 
       {/* Three conditional render states: loading, error, or success */}
       {loading ? (
@@ -186,9 +189,9 @@ const FavouritesList = () => {
                * Each item shows the city name and a delete button.
                */}
               {favorites.map(fav => (
-                <li key={fav.id}>
+                <li key={fav.id} className="h3-fr-flex-row-nav">
                   {fav.city_name}
-                  <button onClick={() => handleDelete(fav.id)}>Delete</button>
+                  <button onClick={() => handleDelete(fav.id)} className="h3-fr-button h3-fr-destructive">Delete</button>
                 </li>
               ))}
             </ul>
