@@ -25,6 +25,20 @@
     margin: var(--spacing-lg) 0;
 }
 
+/*
+ * The SVG icons are monochrome black, and an <img> can't inherit the text colour.
+ * Invert them in the dark theme (the default) so they stay visible; leave light theme as-is.
+ */
+.App .search-bar img,
+.App .weather-icon {
+    filter: invert(1);
+}
+
+.App.h3-fr-dark .search-bar img,
+.App.h3-fr-dark .weather-icon {
+    filter: none;
+}
+
 .temperature {
     font-size: 2.5rem;
     font-weight: 600;

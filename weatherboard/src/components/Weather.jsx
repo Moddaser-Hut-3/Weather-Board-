@@ -15,13 +15,13 @@
 
 import React from 'react';
 import './Weather.css';
-import search_icon from '../assets/search.png';
-import cloudy_icon from '../assets/cloudy.png';
-import rainy_icon from '../assets/rainy.png';
-import sunny_icon from '../assets/sunny.png';
-import windy_icon from '../assets/windy.png';
-import snowy_icon from '../assets/snowy.png';
-import stormy_icon from '../assets/stormy.png';
+import search_icon from '../assets/search.svg';
+import cloudy_icon from '../assets/cloudy.svg';
+import rainy_icon from '../assets/rainy.svg';
+import sunny_icon from '../assets/sunny.svg';
+import windy_icon from '../assets/windy.svg';
+import snowy_icon from '../assets/snowy.svg';
+import stormy_icon from '../assets/stormy.svg';
 import FavouritesList from './FavouritesList';
 import { useState, useRef, useEffect } from 'react';
 

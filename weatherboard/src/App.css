@@ -1,6 +1,8 @@
 .App {
     min-height: 100vh;
     padding: var(--spacing-lg);
+    /* Stack header and content from the top; the framework's space-between pushes content to the bottom. */
+    justify-content: flex-start;
 }
 
 .app-header {
