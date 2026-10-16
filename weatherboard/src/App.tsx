@@ -89,16 +89,16 @@ const App = () => {
   };
 
   return (
-    <div className="App">
+    <div className="App h3-fr-app">
       {/* App header with title and logout button */}
       <div className="app-header">
-        <h1>Weather Board</h1>
+        <h1 className="h3-fr-type-heading-3">Weather Board</h1>
         {/**
          * Logout button only shows when user is logged in.
          * Clicking it calls handleLogout to clear the token and reset state.
          */}
         {isLoggedIn && (
-          <button onClick={handleLogout} className="logout-btn">Logout</button>
+          <button onClick={handleLogout} className="logout-btn h3-fr-button h3-fr-destructive">Logout</button>
         )}
       </div>
 
@@ -127,7 +127,7 @@ const App = () => {
               <Login setIsLoggedIn={setIsLoggedIn} />
               <p className="auth-toggle">
                 Don't have an account?
-                <button onClick={() => setShowLogin(false)}>Register</button>
+                <button onClick={() => setShowLogin(false)} className="h3-fr-button-frameless">Register</button>
               </p>
             </>
           ) : (
@@ -139,7 +139,7 @@ const App = () => {
               <Register setShowLogin={setShowLogin} />
               <p className="auth-toggle">
                 Already have an account?
-                <button onClick={() => setShowLogin(true)}>Login</button>
+                <button onClick={() => setShowLogin(true)} className="h3-fr-button-frameless">Login</button>
               </p>
             </>
           )}

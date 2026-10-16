@@ -150,8 +150,8 @@ const FavouritesList = () => {
   }, []);
 
   return (
-    <div className="favourites-list">
-      <h2>Favourite Cities</h2>
+    <div className="favourites-list h3-fr-card h3-fr-border h3-fr-flex-column">
+      <h2 className="h3-fr-type-heading-4">Favourite Cities</h2>
 
       {/* Three conditional render states: loading, error, or success */}
       {loading ? (
@@ -186,9 +186,9 @@ const FavouritesList = () => {
                * Each item shows the city name and a delete button.
                */}
               {favorites.map(fav => (
-                <li key={fav.id}>
+                <li key={fav.id} className="h3-fr-flex-row-nav">
                   {fav.city_name}
-                  <button onClick={() => handleDelete(fav.id)}>Delete</button>
+                  <button onClick={() => handleDelete(fav.id)} className="h3-fr-button h3-fr-destructive">Delete</button>
                 </li>
               ))}
             </ul>

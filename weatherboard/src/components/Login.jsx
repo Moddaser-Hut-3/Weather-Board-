@@ -114,8 +114,8 @@ const Login = ({ setIsLoggedIn }) => {
     return (
         <div className="login-container">
             {/* Login form */}
-            <form onSubmit={handleSubmit}>
-                <h2>Login</h2>
+            <form onSubmit={handleSubmit} className="h3-fr-card h3-fr-border h3-fr-flex-column">
+                <h2 className="h3-fr-type-heading-4">Login</h2>
 
                 {/* Username input — controlled component */}
                 {/* Value comes from state, so React always knows what's typed */}
@@ -137,7 +137,7 @@ const Login = ({ setIsLoggedIn }) => {
                 />
 
                 {/* Submit button — triggers handleSubmit via form onSubmit */}
-                <button type="submit">Login</button>
+                <button type="submit" className="h3-fr-button h3-fr-primary">Login</button>
             </form>
         </div>
     );

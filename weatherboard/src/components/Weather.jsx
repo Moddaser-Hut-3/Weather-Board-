@@ -331,7 +331,7 @@ const Weather = () => {
     }, []);
 
     return (
-        <div className="weather">
+        <div className="weather h3-fr-card h3-fr-border">
             {/* Search input section */}
             <div className="search-bar">
                 <input
@@ -343,11 +343,9 @@ const Weather = () => {
                     onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
                 />
 
-                <img
-                    src={search_icon}
-                    alt=""
-                    onClick={handleSearch}
-                />
+                <button className="h3-fr-button-icon" onClick={handleSearch} aria-label="Search">
+                    <img src={search_icon} alt="" />
+                </button>
             </div>
 
             {/* Main content: either favorites list or weather results */}
@@ -374,8 +372,8 @@ const Weather = () => {
                          * Heart icon shows if this city is already in favorites.
                          */
                         <>
-                            <button onClick={toggleFavourite} className="favourite-button">
-                                {favourites.some(fav => fav.city === result.city) ? '❤️' : '🤍'} Favourite
+                            <button onClick={toggleFavourite} className="h3-fr-button-icon favourite-button" aria-label="Favourite" title="Favourite">
+                                {favourites.some(fav => fav.city === result.city) ? '❤️' : '🤍'}
                             </button>
                             <img src={getWeatherIcon(result.condition)} alt={result.condition} className="weather-icon" />
                             <p className="temperature">{result.temperature}°C</p>
@@ -392,7 +390,7 @@ const Weather = () => {
             )}
 
             {/* Toggle between weather and favorites view */}
-            <button onClick={() => setShowFavourites(!showFavourites)}>
+            <button onClick={() => setShowFavourites(!showFavourites)} className="h3-fr-button">
                 {showFavourites ? 'Show Weather' : 'Show Favourites'}
             </button>
         </div>
