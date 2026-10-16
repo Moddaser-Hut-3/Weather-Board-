@@ -24,3 +24,8 @@
     position: absolute;
     right: 0;
 }
+
+.theme-toggle {
+    position: absolute;
+    left: 0;
+}

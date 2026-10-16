@@ -13,9 +13,11 @@ import './FavouritesList.css';
 
 /**
  * @component
+ * @param {Object} props
+ * @param {Function} [props.onChange] - Called after a favourite is deleted, so the parent can refresh its copy
  * @returns {JSX.Element} List of favorite cities with delete functionality
  */
-const FavouritesList = () => {
+const FavouritesList = ({ onChange }) => {
   /**
    * List of user's favorite city objects.
    * Each object contains: id, user_id, city_name, latitude, longitude, created_at.
@@ -72,6 +74,7 @@ const FavouritesList = () => {
          * This ensures the UI stays in sync with the backend.
          */
         fetchFavorites();
+        onChange?.();
       } else {
         alert('Failed to delete favorite');
       }

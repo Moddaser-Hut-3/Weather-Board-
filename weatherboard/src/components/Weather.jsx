@@ -76,6 +76,14 @@ const Weather = () => {
     const [loading, setLoading] = useState(false);
 
     /**
+     * True when the current search result is already in the user's favourites.
+     * Matches the server's case-insensitive check on city_name.
+     */
+    const isFavourite = result
+        ? favourites.some(fav => fav.city_name.toLowerCase() === result.city.toLowerCase())
+        : false;
+
+    /**
      * Fetch coordinates from a city name using Open-Meteo geocoding API.
      * Converts user-friendly city name to latitude/longitude so we can fetch weather.
      *
@@ -284,6 +292,14 @@ const Weather = () => {
          */
         if (!result) return;
 
+        /**
+         * Don't send a duplicate. The server also rejects it (409), but this avoids a request.
+         */
+        if (isFavourite) {
+            alert('Already in favourites');
+            return;
+        }
+
         const token = localStorage.getItem('token');
 
         try {
@@ -306,11 +322,13 @@ const Weather = () => {
                  * Refetch the favorites list so the heart icon updates immediately.
                  */
                 fetchFavourites();
-            } else if (response.status === 400) {
+            } else if (response.status === 409) {
                 /**
-                 * 400 means this city is already in favorites (unique constraint).
+                 * 409 means this city is already in favorites.
                  */
-                alert('Already favourited');
+                alert('Already in favourites');
+            } else if (response.status === 400) {
+                alert('Could not add favourite');
             }
         } catch (error) {
             alert('Error adding favourite');
@@ -354,7 +372,7 @@ const Weather = () => {
                  * Show the list of user's favorite cities.
                  * User can manage favorites from this view.
                  */
-                <FavouritesList />
+                <FavouritesList onChange={fetchFavourites} />
             ) : (
                 /**
                  * Show weather search results.
@@ -373,7 +391,7 @@ const Weather = () => {
                          */
                         <>
                             <button onClick={toggleFavourite} className="h3-fr-button-icon favourite-button" aria-label="Favourite" title="Favourite">
-                                {favourites.some(fav => fav.city === result.city) ? '❤️' : '🤍'}
+                                {isFavourite ? '❤️' : '🤍'}
                             </button>
                             <img src={getWeatherIcon(result.condition)} alt={result.condition} className="weather-icon" />
                             <p className="temperature">{result.temperature}°C</p>
