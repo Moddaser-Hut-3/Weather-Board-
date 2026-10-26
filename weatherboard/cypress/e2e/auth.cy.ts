@@ -57,7 +57,7 @@ describe('Authentication', () => {
     cy.contains('button', 'Login').should('be.visible');
   });
 
-    it('should search for multiple cities and display weather (data-driven)', () => {
+  it('should search for multiple cities and display weather (data-driven)', () => {
     // Login first
     cy.get('input[type="text"]').first().type('testuser');
     cy.get('input[type="password"]').type('password123');
@@ -82,6 +82,26 @@ describe('Authentication', () => {
         cy.wait(500);
       });
     });
+  });
+
+  it('should add a favourite and view it in favourites list', () => {
+    cy.get('input[type="text"]').first().type('testuser');
+    cy.get('input[type="password"]').type('password123');
+    cy.contains('button', 'Login').click();
+
+    cy.contains('Weather Board').should('be.visible');
+
+    cy.get('input[placeholder="Search for any City"]').type('Paris');
+    cy.get('img[alt=""]').click();
+    cy.contains('Paris').should('be.visible');
+
+    // add to favourites (the heart button, not the "Show Favourites" toggle)
+    cy.get('button[aria-label="Favourite"]').click(); 
+
+    // view favourites
+    cy.contains('Show Favourites').click();
+    cy.contains('Favourite Cities').should('be.visible');
+    cy.contains('Paris').should('be.visible');
   });
 
 });
