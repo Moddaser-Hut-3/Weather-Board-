@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('Authentication', () => {
   beforeEach(() => {
     cy.visit('/');
@@ -53,6 +55,33 @@ describe('Authentication', () => {
 
     // verify an error message appears (or login button still visible)
     cy.contains('button', 'Login').should('be.visible');
+  });
+
+    it('should search for multiple cities and display weather (data-driven)', () => {
+    // Login first
+    cy.get('input[type="text"]').first().type('testuser');
+    cy.get('input[type="password"]').type('password123');
+    cy.contains('button', 'Login').click();
+
+    // Wait for weather UI to load
+    cy.contains('Weather Board').should('be.visible');
+
+    // Load cities fixture
+    cy.fixture('cities').then((data) => {
+      data.cities.forEach((city: { name: string }) => {
+        // Search for each city
+        cy.get('input[placeholder="Search for any City"]').clear().type(city.name);
+        cy.get('img[alt=""]').click(); // Click search icon
+
+        // Verify weather data appears for this city
+        cy.contains(city.name).should('be.visible');
+        cy.get('.temperature').should('be.visible');
+        cy.get('.weather-icon').should('be.visible');
+
+        // Wait a moment before next search
+        cy.wait(500);
+      });
+    });
   });
 
 });

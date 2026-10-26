@@ -1,0 +1,9 @@
+{ 
+    "cities": [
+        { "name": "London", "country": "United Kingdom" },
+        { "name": "Paris", "country": "France" },
+        { "name": "Tokyo", "country": "Japan" },
+        { "name": "New York", "country": "United States" },
+        { "name": "Sydney", "country": "Australia" }
+    ]
+}
