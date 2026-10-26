@@ -30,14 +30,24 @@ Cypress is a highly suitable E2E testing tool for our WeatherBoard CI/CD pipelin
 2. **Manual Selector Strategy**: Selectors require manual inspection via DevTools, increasing setup time for complex UIs.
 3. **Platform Constraints**: Limited to Chrome, Edge, and Firefox; requires Node.js/npm, which may not suit all team environments.
 
-## Overall Suitability for CI/CD
-**Recommendation: Suitable**
+## Alternatives Considered
 
-## Reasoning
-Cypress is well-suited for our CI/CD pipeline because it integrates natively with our Node.js and npm-based stack. The setup process is simple and requires minimal configuration. The visual debugging experience—showing each step, network request, and assertion—significantly speeds up test development and troubleshooting.
+### Playwright (Microsoft)
+**Pros**: Free parallel execution, multi-browser support (including Safari), multi-tab/multi-origin flows, better CI debugging with trace viewer, broader scope (API + component testing), typically 2-3s per test.
 
-Our evaluation demonstrated exceptional reliability: all 15 tests (5 runs × 3 tests) passed without flakiness or timeouts. Execution times average 4.6 seconds, which is efficient for automated testing in pipelines. The zero-cost, open-source model eliminates licensing barriers.
+**Cons**: Less polished UI than Cypress for interactive debugging.
 
-For teams new to E2E testing, Cypress's learning curve is shallow thanks to intuitive syntax and excellent visual feedback. While limitations exist (single-tab testing, manual selectors), they do not significantly impact our current testing requirements for the WeatherBoard application.
+**Verdict**: Better fit for large-scale projects (100+ tests) with multi-browser requirements.
 
-**Conclusion**: Adopt Cypress as the primary E2E testing tool for our CI/CD pipeline.
+### Selenium
+**Pros**: Industry standard.
+
+**Cons**: Slower, more complex, steeper learning curve.
+
+**Verdict**: Not recommended for new Node.js projects.
+
+## Final Recommendation
+
+For smaller projects like WeatherBoard, Cypress excels. For future large-scale company projects with complex multi-browser requirements and 100+ tests, **evaluate Playwright** as an alternative due to superior parallel execution and scaling capabilities.
+
+**Conclusion**: Cypress is production-ready and a great choice of a CI/CD pipeline. 
