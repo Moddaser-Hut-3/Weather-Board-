@@ -104,4 +104,17 @@ describe('Authentication', () => {
     cy.contains('Paris').should('be.visible');
   });
 
+  it('should logout and return to the login page', () => {
+    cy.get('input[type="text"]').first().type('testuser');
+    cy.get('input[type="password"]').type('password123');
+    cy.contains('button', 'Login').click();
+
+    cy.contains('Weather Board').should('be.visible');
+
+    cy.contains('Logout').click();
+
+    cy.contains('button', 'Login').should('be.visible');
+    cy.get('.search-bar').should('not.exist');
+  });
+
 });
