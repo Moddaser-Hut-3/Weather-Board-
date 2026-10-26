@@ -32,6 +32,27 @@ describe('Authentication', () => {
     cy.contains('London').should('be.visible'); 
     cy.get('.temperature').should('be.visible');
     cy.get('.weather-icon').should('be.visible');
-  })
+  });
+
+  it('Should reject login with wrong password', () => {
+    // set up intercept BEFORE making the request
+    cy.intercept('POST', '**/api/auth/login').as('loginAttempt');
+
+    // Try to login with wrong password
+    cy.get('input[type="text"]').first().type('testuser');
+    cy.get('input[type="password"]').type('wrongpassword');
+    cy.contains('button', 'Login').click();
+
+    // wait for the failed login
+    cy.wait('@loginAttempt').then((interception) => {
+        expect(interception.response?.statusCode).to.equal(401);
+    });
+
+    // changed: Check for search bar NOT visible instead of Weather Board
+    cy.get('.search-bar').should('not.exist');
+
+    // verify an error message appears (or login button still visible)
+    cy.contains('button', 'Login').should('be.visible');
+  });
 
 });
